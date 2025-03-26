@@ -18,7 +18,7 @@ public class CustomersController(ICustomerService customerService, ILogger<Custo
         _logger.LogInformation("Fetching all customers");
         try {
             var customers = await _customerService.GetListAsync();
-            _logger.LogInformation("Successfully retrieved {Count} customers", customers.Count());
+            _logger.LogInformation("Successfully retrieved {Count} customers", customers.Count);
             return Ok(customers);
         }
         catch (Exception ex) {
@@ -111,7 +111,11 @@ public class CustomersController(ICustomerService customerService, ILogger<Custo
                 _logger.LogWarning("Delete failed - Customer with id {Id} not found", id);
                 return NotFound();
             }
-            _customerService.Delete(id);
+            var deleted = await _customerService.Delete(id);
+            if (!deleted) {
+                _logger.LogWarning("Delete failed - Customer with id {Id} not found", id);
+                return NotFound();
+            }
             _logger.LogInformation("Successfully deleted customer with id: {Id}", id);
             return NoContent();
         }

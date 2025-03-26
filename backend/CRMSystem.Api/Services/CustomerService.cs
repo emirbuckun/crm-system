@@ -9,7 +9,7 @@ public interface ICustomerService {
     Task<Customer?> GetAsync(Expression<Func<Customer, bool>>? filter = null);
     Task<Customer> CreateAsync(Customer customer);
     Task<Customer> UpdateAsync(Customer customer);
-    void Delete(int id);
+    Task<bool> Delete(int id);
 }
 
 public class CustomerService(ICustomersRepository customersRepository) : ICustomerService {
@@ -31,7 +31,7 @@ public class CustomerService(ICustomersRepository customersRepository) : ICustom
         return await _customersRepository.UpdateCustomerAsync(customer);
     }
 
-    public void Delete(int id) {
-        _customersRepository.DeleteCustomerAsync(id);
+    public async Task<bool> Delete(int id) {
+        return await _customersRepository.DeleteCustomerAsync(id);
     }
 }

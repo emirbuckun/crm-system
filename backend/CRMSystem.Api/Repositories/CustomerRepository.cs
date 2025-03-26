@@ -10,7 +10,7 @@ public interface ICustomersRepository {
     Task<Customer?> GetCustomerAsync(Expression<Func<Customer, bool>>? filter = null);
     Task<Customer> CreateCustomerAsync(Customer customer);
     Task<Customer> UpdateCustomerAsync(Customer customer);
-    void DeleteCustomerAsync(int id);
+    Task<bool> DeleteCustomerAsync(int id);
 }
 
 public class CustomerRepository(AppDbContext context) : ICustomersRepository {
@@ -22,12 +22,14 @@ public class CustomerRepository(AppDbContext context) : ICustomersRepository {
         return customer;
     }
 
-    public async void DeleteCustomerAsync(int id) {
+    public async Task<bool> DeleteCustomerAsync(int id) {
         var customer = _context.Customers.Find(id);
         if (customer != null) {
             _context.Customers.Remove(customer);
             await _context.SaveChangesAsync();
+            return true;
         }
+        return false;
     }
 
     public async Task<Customer?> GetCustomerAsync(Expression<Func<Customer, bool>>? filter = null) {
