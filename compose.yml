@@ -1,17 +1,4 @@
 services:
-  api:
-    container_name: crm_api
-    image: crm_api
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    ports:
-      - 3001:3001
-    depends_on:
-      - db
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=CRMSystem;Username=postgres;Password=Emir@123
   db:
     container_name: crm_db
     image: postgres
