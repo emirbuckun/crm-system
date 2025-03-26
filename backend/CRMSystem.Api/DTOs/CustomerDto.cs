@@ -1,6 +1,7 @@
 using CRMSystem.Api.Models;
 
 namespace CRMSystem.Api.DTOs;
+
 public class CustomerDto {
     public required string FirstName { get; set; }
     public required string LastName { get; set; }

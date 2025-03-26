@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CRMSystem.Api.Data;
+
 public class AppDbContext : DbContext {
     public DbSet<User> Users { get; set; }
     public DbSet<Customer> Customers { get; set; }
