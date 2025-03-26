@@ -4,6 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace CRMSystem.Api.Repositories;
+
+public interface IUserRepository {
+    Task<List<User>> GetUsersAsync(Expression<Func<User, bool>>? filter = null);
+    Task<User?> GetUserAsync(Expression<Func<User, bool>>? filter = null);
+    Task<User> CreateUserAsync(User user);
+    Task<User> UpdateUserAsync(User user);
+    void DeleteUserAsync(int id);
+}
+
 public class UserRepository(AppDbContext context) : IUserRepository {
     private readonly AppDbContext _context = context;
 
