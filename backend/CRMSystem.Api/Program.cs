@@ -1,23 +1,15 @@
 using CRMSystem.Api.Data;
-using CRMSystem.Api.Repositories;
-using CRMSystem.Api.Services;
+using CRMSystem.Api.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerConfiguration();
 builder.Services.AddControllers();
-
-string connectionString = builder.Configuration.GetConnectionString("Default")!;
-builder.Services.AddDbContext<AppDbContext>(op => op.UseNpgsql(connectionString));
-
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ICustomerService, CustomerService>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<ICustomersRepository, CustomerRepository>();
+builder.Services.AddDatabaseConfiguration(builder.Configuration);
+builder.Services.AddScopedServicesAndRepositories();
+builder.Services.AddAuthenticationAndAuthorization(builder.Configuration);
 
 builder.Services.AddCors(options => {
     options.AddDefaultPolicy(builder => {
@@ -41,5 +33,7 @@ if (app.Environment.IsDevelopment()) {
 
 app.UseCors();
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 app.Run();

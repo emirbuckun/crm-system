@@ -2,10 +2,13 @@ using Microsoft.AspNetCore.Mvc;
 using CRMSystem.Api.Models;
 using CRMSystem.Api.Services;
 using CRMSystem.Api.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CRMSystem.Api.Controllers;
-[Route("api/[controller]")]
+
+[Authorize]
 [ApiController]
+[Route("api/[controller]")]
 public class CustomersController(ICustomerService customerService, ILogger<CustomersController> logger) : ControllerBase {
     private readonly ICustomerService _customerService = customerService;
     private readonly ILogger<CustomersController> _logger = logger;
