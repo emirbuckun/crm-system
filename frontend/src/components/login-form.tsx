@@ -12,32 +12,31 @@ import { Label } from "@/components/ui/label"
 import { useState } from "react";
 import { api } from "@/lib/api";
 
-export function LoginForm({
+export function AuthForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [isRegister, setIsRegister] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { token } = await api.login(username, password);
-      localStorage.setItem("token", token);
-      window.location.href = "/customers";
+      if (isRegister) {
+        await api.register(username, password);
+        alert("Registration successful. You can now log in.");
+        setIsRegister(false);
+      } else {
+        const { token } = await api.login(username, password);
+        localStorage.setItem("token", token);
+        window.location.href = "/customers";
+      }
     } catch {
-      setError("Login failed. Please check your credentials.");
-    }
-  };
-
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await api.register(username, password);
-      alert("Registration successful. You can now log in.");
-    } catch {
-      setError("Registration failed. Please try again.");
+      setError(isRegister ?
+        "Registration failed. Please try again." :
+        "Login failed. Please check your credentials.");
     }
   };
 
@@ -47,13 +46,17 @@ export function LoginForm({
         <div className={cn("flex flex-col gap-6", className)} {...props}>
           <Card className="shadow-lg">
             <CardHeader>
-              <CardTitle className="text-center text-xl font-bold">Login to your account</CardTitle>
+              <CardTitle className="text-center text-xl font-bold">
+                {isRegister ? "Create an account" : "Login to your account"}
+              </CardTitle>
               <CardDescription className="text-center text-sm text-gray-600">
-                Enter your email below to login to your account
+                {isRegister
+                  ? "Enter your details below to create an account"
+                  : "Enter your email below to login to your account"}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleLogin}>
+              <form onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-6">
                   <div className="grid gap-3">
                     <Label htmlFor="username">Username</Label>
@@ -78,15 +81,34 @@ export function LoginForm({
                   {error && <p className="text-red-500">{error}</p>}
                   <div>
                     <Button type="submit" className="w-full">
-                      Login
+                      {isRegister ? "Sign Up" : "Login"}
                     </Button>
                   </div>
                 </div>
                 <div className="mt-4 text-center text-sm">
-                  Don&apos;t have an account?{" "}
-                  <a href="#" onClick={handleRegister} className="underline underline-offset-4">
-                    Sign up
-                  </a>
+                  {isRegister ? (
+                    <>
+                      Already have an account?{" "}
+                      <a
+                        href="#"
+                        onClick={() => setIsRegister(false)}
+                        className="underline underline-offset-4"
+                      >
+                        Login
+                      </a>
+                    </>
+                  ) : (
+                    <>
+                      Don&apos;t have an account?{" "}
+                      <a
+                        href="#"
+                        onClick={() => setIsRegister(true)}
+                        className="underline underline-offset-4"
+                      >
+                        Sign up
+                      </a>
+                    </>
+                  )}
                 </div>
               </form>
             </CardContent>
